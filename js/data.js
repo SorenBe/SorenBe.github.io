@@ -15,7 +15,7 @@ App.profile = {
   cv: "assets/CV_Ziyad_Benabdeljalil.pdf",
   photo: "assets/photo.jpg",
   linkedin: "https://www.linkedin.com/in/mohame-ziyad-benabdeljalil-9b34a6268",
-  linkedinLabel: "mohame-ziyad-benabdeljalil",
+  linkedinLabel: "mohamed-ziyad-benabdeljalil",
   github: "https://github.com/SorenBe"
 };
 
