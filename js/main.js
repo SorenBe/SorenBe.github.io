@@ -19,10 +19,10 @@
       ["", "Memory test: 3 internships, 6 projects ........ <span class='ok'>OK</span>"],
       ["b", "[    0.000000] Linux version 6.8.0-ziyad (gcc 13.2)"],
       ["", "[    0.042133] Mounting /home/ziyad/experience ........ <span class='ok'>[ OK ]</span>"],
-      ["", "[    0.118020] Starting docker.service ................. <span class='ok'>[ OK ]</span>"],
-      ["", "[    0.204871] Starting kubelet.service ................ <span class='ok'>[ OK ]</span>"],
+      ["", "[    0.118020] Linking sites: Casablanca · Tanger · Agadir <span class='ok'>[ OK ]</span>"],
+      ["", "[    0.204871] Starting docker.service ................. <span class='ok'>[ OK ]</span>"],
       ["", "[    0.311458] pve-cluster: quorum 3/3 — ceph HEALTH_OK  <span class='ok'>[ OK ]</span>"],
-      ["", "[    0.402911] Loading skills graph (38 nodes) ......... <span class='ok'>[ OK ]</span>"],
+      ["", `[    0.402911] Loading skills graph (${App.skills.length} nodes) ......... <span class='ok'>[ OK ]</span>`],
       ["w", "[    0.455001] warn: candidate highly motivated — consider hiring"],
       ["", "[    0.512340] Reached target <b>portfolio.target</b>"],
     ];
@@ -80,10 +80,10 @@
       ["Host", "EMSI Rabat · MIAGE"],
       ["Kernel", L({ fr: "Informatique & Réseaux", en: "CS & Networks" })],
       ["Uptime", L({ fr: "5 ans de cycle ingénieur", en: "5 years engineering school" })],
-      ["Packages", L({ fr: "38 technos (graph)", en: "38 techs (graph)" })],
+      ["Packages", L({ fr: App.skills.length + " compétences", en: App.skills.length + " skills" })],
       ["Shell", "bash · python · java"],
-      ["Cloud", "Docker · K8s · OpenShift"],
-      ["Infra", "Proxmox VE · Ceph"],
+      ["Network", "Cisco · Meraki · VLAN"],
+      ["Virt", "Proxmox VE · Ceph · Docker"],
       ["Locale", "fr_MA · ar_MA · en_US"],
       ["Status", `<span style="color:var(--ok)">● ${L({ fr: "disponible", en: "available" })}</span>`],
     ];
@@ -94,7 +94,7 @@
 
   /* ================= MARQUEE ================= */
   function renderMarquee() {
-    const items = ["Java", "Python", "FastAPI", "Spring Boot", "React", "Docker", "Kubernetes", "OpenShift", "Proxmox VE", "Ceph", "PostgreSQL", "MongoDB", "GitHub Actions", "PyTorch", "TCP/IP", "OWASP", "Salesforce", "Grafana"];
+    const items = App.skills.map((s) => (App.state.lang === "en" && s.en ? s.en : s.n));
     const track = $("#marquee"); track.innerHTML = "";
     for (let k = 0; k < 2; k++) items.forEach((i) => track.append(h("span", {}, i)));
   }
@@ -156,12 +156,12 @@
 
   /* ================= PROJECTS ================= */
   const FLOWS = {
-    micro: { fr: ["Client", "API Gateway", "Service A", "Service B", "Service C", "Données"], en: ["Client", "API Gateway", "Service A", "Service B", "Service C", "Data"], kind: "fan" },
-    devsecops: { fr: ["Commit", "Build", "SAST", "Tests", "Image", "Déploiement"], en: ["Commit", "Build", "SAST", "Tests", "Image", "Deploy"] },
-    face: { fr: ["Image A · B", "CNN partagé", "Embeddings", "Distance", "Même personne ?"], en: ["Image A · B", "Shared CNN", "Embeddings", "Distance", "Same person?"] },
-    agri: { fr: ["Image", "Augmentation", "CNN", "Softmax", "Classe"], en: ["Image", "Augmentation", "CNN", "Softmax", "Class"] },
-    nlp: { fr: ["Texte", "Nettoyage", "Tokenisation", "Vectorisation", "Classifieur", "Polarité"], en: ["Text", "Cleaning", "Tokenisation", "Vectorisation", "Classifier", "Polarity"] },
-    ecom: { fr: ["Client", "Frontend", "API", "Base de données", "Back-office"], en: ["Customer", "Frontend", "API", "Database", "Back-office"] }
+    micro: { fr: ["Client", "Services Spring Boot", "Images Docker", "Cluster Kubernetes"], en: ["Client", "Spring Boot services", "Docker images", "Kubernetes cluster"] },
+    devsecops: { fr: ["Commit", "Build", "Tests", "Analyse vulnérab.", "Déploiement"], en: ["Commit", "Build", "Tests", "Vuln. scan", "Deploy"] },
+    face: { fr: ["Image A · B", "Réseau partagé", "Représentations", "Distance", "Même personne ?"], en: ["Image A · B", "Shared network", "Representations", "Distance", "Same person?"] },
+    agri: { fr: ["Image", "Prétraitement", "Modèle", "Classe"], en: ["Image", "Preprocessing", "Model", "Class"] },
+    nlp: { fr: ["Texte", "Préparation", "Représentation", "Classifieur", "Polarité"], en: ["Text", "Preparation", "Representation", "Classifier", "Polarity"] },
+    ecom: { fr: ["Catalogue", "Panier", "Commande", "Administration"], en: ["Catalogue", "Cart", "Checkout", "Administration"] }
   };
   function flowSvg(id) {
     const f = FLOWS[id]; if (!f) return "";
@@ -229,9 +229,9 @@
       h("span", { class: "edu-year", html: e.period.replace(" – ", "<br>") }),
       h("h3", {}, L(e.title)), h("p", { class: "school" }, e.school), h("p", { class: "meta" }, e.period + " · " + e.place),
       L(e.detail) ? h("p", { class: "detail" }, L(e.detail)) : null)));
-    $("#certs").innerHTML = ""; App.certs.forEach((c) => $("#certs").append(h("div", { class: "cert-group" }, h("h5", {}, L(c.group)), h("div", {}, c.items.map((i) => h("span", { class: "cert" }, i))))));
+    $("#certs").innerHTML = ""; $("#certs").append(h("ul", { class: "cert-list" }, App.certs.map((c) => h("li", {}, h("b", {}, L(c.t)), h("span", {}, c.by + ", " + c.y)))), h("p", { class: "cert-also" }, t("edu.also") + " : " + App.certsAlso + "."));
     $("#langs").innerHTML = ""; App.languages.forEach((l) => $("#langs").append(h("div", { class: "lang" }, h("div", { class: "lang-h" }, h("b", {}, L(l.n)), h("span", {}, L(l.lvl))), h("div", { class: "meter" }, h("i", { style: { "--v": l.v + "%" } })))));
-    $("#soft").innerHTML = ""; L(App.softSkills).forEach((s) => $("#soft").append(h("li", {}, s)));
+    $("#soft-src").textContent = L(App.softSkills.source); $("#soft").innerHTML = ""; L(App.softSkills).forEach((s) => $("#soft").append(h("li", {}, s)));
     $("#interests").innerHTML = ""; L(App.interests).forEach((s) => $("#interests").append(h("div", { class: "interest" }, h("b", {}, s.t), h("span", {}, s.d))));
     observeReveal(list);
   }
@@ -245,7 +245,7 @@
     const sel = $("#subject-select"); const prev = sel.selectedIndex; sel.innerHTML = "";
     t("contact.subjects").forEach((s) => sel.append(h("option", {}, s))); if (prev > 0) sel.selectedIndex = prev;
     const soc = $("#socials"); soc.innerHTML = "";
-    [["LinkedIn", P.linkedin], ["GitHub", P.github]].filter(([, u]) => u).forEach(([n, u]) => soc.append(h("a", { class: "btn btn-ghost", href: u, target: "_blank", rel: "noopener", html: `<svg><use href="#i-link"/></svg>${n}` })));
+    [["LinkedIn", P.linkedin], ["GitHub", P.github], ].filter(([, u]) => u).forEach(([n, u]) => soc.append(h("a", { class: "btn btn-ghost", href: u, target: "_blank", rel: "noopener", html: `<svg><use href="#i-link"/></svg>${n}` })));
   }
   function bindContact() {
     $("#copy-email").addEventListener("click", async () => {
@@ -439,7 +439,7 @@
 
   /* ================= LANG RE-RENDER ================= */
   function renderDynamic() {
-    renderNeofetch(); renderSkills(); renderProjects(); renderEducation(); renderContact(); typed();
+    renderNeofetch(); renderMarquee(); renderSkills(); renderProjects(); renderEducation(); renderContact(); typed();
     // timeline : on préserve les labs montés en les remontant dans la nouvelle langue
     const openTabs = {}; $$(".job").forEach((j) => (openTabs[j.id] = j.querySelector('.tab[aria-selected="true"]')?.dataset.panel));
     $$(".job [data-mounted]").forEach((box) => App.labStop(box));
@@ -454,6 +454,7 @@
     document.documentElement.dataset.theme = state.theme;
     App.applyI18n();
     $("#year").textContent = new Date().getFullYear();
+    $("#stat-tech").dataset.to = App.skills.length; $("#stat-certs").dataset.to = App.certs.length;
     renderMarquee(); renderNeofetch(); renderTimeline(); renderSkills(); renderProjects(); renderEducation(); renderContact();
     bindContact(); bindScroll(); bindCursor(); bindPalette(); bindKeys();
     observeReveal();

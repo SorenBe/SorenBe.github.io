@@ -1,11 +1,11 @@
 /* ==========================================================================
    LABS — trois simulateurs interactifs liés aux expériences
-   - k8s : ordonnanceur de conteneurs avec boucle de réconciliation
-   - pve : cluster Proxmox VE + Ceph avec HA, fio et iperf3
-   - ci  : pipeline GitHub Actions avec logs et injection de bug
+   - net : réseau & stockage multi-sites (Casablanca, Tanger, Agadir)
+   - pve : cluster Proxmox VE + Ceph : migration de VMs et haute disponibilité
+   - ci  : pipeline CI/CD avec logs et injection de bug
    ========================================================================== */
 (function () {
-  const { h, t, rand, pick, sleep, sparkline, css, whenVisible } = App;
+  const { h, t, L, rand, pick, sleep, sparkline, css, whenVisible } = App;
 
   function logger(el) {
     return (msg, cls = "") => {
@@ -17,105 +17,132 @@
   }
 
   /* =====================================================================
-     1) ORCHESTRATEUR (CMA CGM — conteneurisation)
+     1) RÉSEAU & STOCKAGE MULTI-SITES (CMA CGM — 3 sites)
+     Simulation illustrative : noms, adresses et valeurs fictifs.
      ===================================================================== */
-  function k8sLab(root) {
-    const S = { desired: 4, nodes: [{ name: "worker-1", up: true }, { name: "worker-2", up: true }, { name: "worker-3", up: true }], pods: [], seq: 0, rps: [] };
-    let timer = 0, tickT = 0;
+  function netLab(root) {
+    const SITES = [
+      { id: "cas", name: "Casablanca", hq: true, lat: 2, net: "10.10" },
+      { id: "tng", name: "Tanger", hq: false, lat: 14, net: "10.20" },
+      { id: "aga", name: "Agadir", hq: false, lat: 11, net: "10.30" }
+    ];
+    const DEVICES = [
+      { k: "gw", vendor: "Meraki", role: { fr: "Passerelle de sécurité", en: "Security gateway" } },
+      { k: "sw", vendor: "Cisco", role: { fr: "Commutation", en: "Switching" } },
+      { k: "srv", vendor: "Dell", role: { fr: "Serveur", en: "Server" } },
+      { k: "nas", vendor: "Synology", role: { fr: "Stockage NAS", en: "NAS storage" } }
+    ];
+    const VLANS = [
+      { id: 10, n: { fr: "Données", en: "Data" } },
+      { id: 20, n: { fr: "Voix", en: "Voice" } },
+      { id: 30, n: { fr: "Invités", en: "Guests" } },
+      { id: 99, n: { fr: "Administration", en: "Management" } }
+    ];
+    const S = { up: { cas: true, tng: true, aga: true }, vlan: false, sync: {}, busy: false, thr: [] };
+    let timer = 0;
 
     root.innerHTML = "";
-    const title = h("p", { class: "lab-title mono" }, h("span", { class: "dot ok" }), t("lab.k8s.title"), h("span", { class: "tag" }, "deployment/logistics-api"));
-    const btn = (key, fn, cls = "") => h("button", { class: "lb " + cls, onclick: fn }, t(key));
+    const title = h("p", { class: "lab-title mono" }, h("span", { class: "dot ok" }), t("lab.net.title"), h("span", { class: "tag" }, "Casablanca · Tanger · Agadir"));
+    const vlanBtn = h("button", { class: "lb", onclick: () => { S.vlan = !S.vlan; vlanBtn.classList.toggle("sel", S.vlan); render(); } }, t("lab.net.vlan"));
     const btns = h("div", { class: "lab-btns" },
-      btn("lab.k8s.scaleDown", () => scale(-1)),
-      btn("lab.k8s.scaleUp", () => scale(1)),
-      btn("lab.k8s.kill", killRandom, "danger"),
-      btn("lab.k8s.drain", nodeFail, "danger"),
-      btn("lab.k8s.reset", reset));
+      h("button", { class: "lb", onclick: ping }, t("lab.net.ping")),
+      h("button", { class: "lb", onclick: replicate }, t("lab.net.sync")),
+      vlanBtn,
+      h("button", { class: "lb", onclick: documentation }, t("lab.net.doc")));
     const metrics = h("div", { class: "lab-metrics" });
-    const bar = h("i"); const lbRow = h("div", { class: "k8s-lb" }, "ingress → svc/logistics-api", h("div", { class: "bar" }, bar), h("span", { class: "rps" }, "0 req/s"));
-    const nodesEl = h("div", { class: "k8s-nodes" });
+    const wan = h("div", { class: "wan-bar mono" });
+    const sitesEl = h("div", { class: "net-sites" });
     const chart = h("canvas");
-    const stage = h("div", { class: "lab-stage" }, lbRow, nodesEl, h("div", { class: "chart", style: { marginTop: "12px" } }, h("div", { class: "chart-h" }, "throughput", h("b", { class: "thr" }, "0")), chart));
+    const stage = h("div", { class: "lab-stage" }, wan, sitesEl,
+      h("div", { class: "chart", style: { marginTop: "12px" } }, h("div", { class: "chart-h" }, L({ fr: "trafic inter-sites", en: "inter-site traffic" }), h("b", { class: "thr" }, "0")), chart));
     const logEl = h("div", { class: "lab-log" }); const log = logger(logEl);
-    root.append(h("div", { class: "lab" }, h("div", { class: "lab-top" }, title, btns), h("p", { class: "lab-hint" }, t("lab.k8s.hint")), metrics, stage, logEl));
+    root.append(h("div", { class: "lab" }, h("div", { class: "lab-top" }, title, btns), h("p", { class: "lab-hint" }, t("lab.net.hint")), metrics, stage, logEl));
 
-    function upNodes() { return S.nodes.map((n, i) => (n.up ? i : -1)).filter((i) => i >= 0); }
-    function leastLoaded() {
-      const ups = upNodes(); if (!ups.length) return -1;
-      return ups.sort((a, b) => S.pods.filter((p) => p.node === a && !p.dying).length - S.pods.filter((p) => p.node === b && !p.dying).length)[0];
+    wan.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-site]"); if (!b) return;
+      const id = b.dataset.site, site = SITES.find((s) => s.id === id);
+      S.up[id] = !S.up[id];
+      if (S.up[id]) log(`${site.name}: ${L({ fr: "lien WAN rétabli", en: "WAN link restored" })}`, "ok");
+      else log(`${site.name}: ${L({ fr: "lien WAN coupé — site injoignable", en: "WAN link down — site unreachable" })}`, "e");
+      if (!S.up[id] && S.sync[id] != null && S.sync[id] < 100) { log(`${site.name}: ${L({ fr: "réplication NAS interrompue", en: "NAS replication interrupted" })}`, "w"); delete S.sync[id]; }
+      render();
+    });
+
+    const reachable = (a, b) => S.up[a] && S.up[b];
+
+    async function ping() {
+      if (S.busy) return; S.busy = true; render();
+      log("ping " + L({ fr: "inter-sites", en: "inter-site" }) + " (5 × ICMP)", "d");
+      for (let i = 0; i < SITES.length; i++) for (let j = i + 1; j < SITES.length; j++) {
+        const a = SITES[i], b = SITES[j];
+        await sleep(450);
+        if (reachable(a.id, b.id)) {
+          const ms = (a.lat + b.lat) * rand(.9, 1.15);
+          log(`${a.name} → ${b.name} : ${L({ fr: "5/5 reçus", en: "5/5 received" })}, ${ms.toFixed(1)} ms`, "ok");
+        } else log(`${a.name} → ${b.name} : ${L({ fr: "délai dépassé, 0/5 reçus", en: "timed out, 0/5 received" })}`, "e");
+      }
+      S.busy = false; render();
     }
-    function newPod() {
-      const id = "pod-" + (++S.seq).toString(36).padStart(3, "0") + Math.random().toString(36).slice(2, 4);
-      const node = leastLoaded();
-      if (node < 0) { log("0/3 nodes available: insufficient resources", "e"); return; }
-      const pod = { id, node, phase: "Pending" };
-      S.pods.push(pod);
-      log(`scheduler: assigned <b>${id}</b> → ${S.nodes[node].name}`, "i");
-      setTimeout(() => { if (S.pods.includes(pod) && !pod.dying) { pod.phase = "Running"; log(`kubelet: ${id} Running (readiness probe OK)`, "ok"); render(); } }, rand(700, 1500));
-    }
-    function reconcile() {
-      const alive = S.pods.filter((p) => !p.dying && S.nodes[p.node].up);
-      if (alive.length < S.desired) newPod();
-      else if (alive.length > S.desired) { const p = alive[alive.length - 1]; terminate(p, "scale down"); }
+
+    function replicate() {
+      SITES.filter((s) => !s.hq).forEach((s) => {
+        if (!reachable("cas", s.id)) { log(`${s.name}: ${L({ fr: "réplication impossible, site injoignable", en: "replication impossible, site unreachable" })}`, "e"); return; }
+        if (S.sync[s.id] != null && S.sync[s.id] < 100) return;
+        S.sync[s.id] = 0;
+        log(`NAS ${s.name} → NAS Casablanca : ${L({ fr: "réplication démarrée", en: "replication started" })}`, "i");
+      });
       render();
     }
-    function terminate(p, why) {
-      if (p.dying) return; p.dying = true; log(`${p.id} Terminating (${why})`, "w"); render();
-      setTimeout(() => { S.pods = S.pods.filter((x) => x !== p); render(); }, 500);
+
+    function documentation() {
+      log(L({ fr: "Inventaire généré :", en: "Inventory generated:" }), "i");
+      log("| Site       | " + DEVICES.map((d) => d.vendor.padEnd(9)).join("| ") + "| WAN  |", "d");
+      SITES.forEach((s) => log(`| ${s.name.padEnd(10)} | ` + DEVICES.map((d) => (s.id + "-" + d.k).padEnd(9)).join("| ") + `| ${S.up[s.id] ? "up  " : "down"} |`, ""));
+      log(L({ fr: "Plan d'adressage : ", en: "Addressing plan: " }) + SITES.map((s) => `${s.name} ${s.net}.0.0/16`).join(" · "), "d");
+      log(L({ fr: "✓ schéma et inventaire prêts pour la documentation technique", en: "✓ diagram and inventory ready for the technical documentation" }), "ok");
     }
-    function scale(d) {
-      const n = Math.max(1, Math.min(9, S.desired + d));
-      if (n === S.desired) return; S.desired = n;
-      log(`kubectl scale deployment/logistics-api --replicas=${n}`, "d"); reconcile();
-    }
-    function killRandom() {
-      const alive = S.pods.filter((p) => !p.dying);
-      if (!alive.length) return; const p = pick(alive);
-      log(`kubectl delete pod ${p.id} --force`, "d"); terminate(p, "killed");
-    }
-    function nodeFail() {
-      const ups = upNodes(); if (ups.length <= 1) { log("refusing: last schedulable node", "w"); return; }
-      const i = pick(ups); S.nodes[i].up = false;
-      log(`node/${S.nodes[i].name} NotReady — evicting pods`, "e");
-      S.pods.filter((p) => p.node === i).forEach((p) => terminate(p, "node lost"));
-      setTimeout(() => { S.nodes[i].up = true; log(`node/${S.nodes[i].name} Ready`, "ok"); render(); }, 9000);
-    }
-    function reset() { S.desired = 4; S.nodes.forEach((n) => (n.up = true)); S.pods = []; log("cluster reset", "d"); render(); }
-    function podClick(e) { const id = e.target.closest(".pod")?.dataset.id; const p = S.pods.find((x) => x.id === id); if (p) { log(`kubectl delete pod ${p.id}`, "d"); terminate(p, "killed"); } }
-    nodesEl.addEventListener("click", podClick);
 
     function render() {
-      nodesEl.innerHTML = "";
-      S.nodes.forEach((n, i) => {
-        const pods = S.pods.filter((p) => p.node === i);
-        nodesEl.append(h("div", { class: "k8s-node" + (n.up ? "" : " down") },
-          h("h5", {}, h("span", {}, n.name), h("span", {}, n.up ? "Ready" : "NotReady")),
-          h("div", { class: "k8s-pods" }, pods.map((p) => h("div", { class: "pod " + (p.dying ? "dying" : p.phase === "Pending" ? "pending" : ""), "data-id": p.id, title: p.id + " · " + p.phase }, p.id.slice(4, 7))))));
+      wan.innerHTML = "";
+      wan.append(h("span", { class: "wan-label" }, t("lab.net.wan")));
+      SITES.forEach((s) => wan.append(h("button", { class: "wan-link" + (S.up[s.id] ? "" : " down"), "data-site": s.id, title: L({ fr: "Cliquer pour couper / rétablir", en: "Click to cut / restore" }) },
+        h("span", { class: "dot " + (S.up[s.id] ? "ok" : "err") }), s.name, h("small", {}, S.up[s.id] ? s.lat + " ms" : "down"))));
+
+      sitesEl.innerHTML = "";
+      SITES.forEach((s) => {
+        const up = S.up[s.id];
+        const body = S.vlan
+          ? h("div", { class: "vlans" }, VLANS.map((v) => h("div", { class: "vlan v" + v.id }, h("b", {}, "VLAN " + v.id), h("span", {}, L(v.n)), h("small", {}, `${s.net}.${v.id}.0/24`))))
+          : h("ul", { class: "devices" }, DEVICES.map((d) => h("li", {}, h("span", { class: "dot " + (up || d.k !== "gw" ? "ok" : "warn") }), h("b", {}, d.vendor), h("span", {}, L(d.role)))));
+        const sync = S.sync[s.id];
+        sitesEl.append(h("div", { class: "net-site" + (up ? "" : " down") },
+          h("h5", {}, h("span", {}, s.name), h("small", {}, s.hq ? t("lab.net.hq") : t("lab.net.branch"))),
+          body,
+          sync != null ? h("div", { class: "sync" }, h("span", {}, sync >= 100 ? L({ fr: "réplication ✓", en: "replication ✓" }) : `NAS → Casablanca ${Math.floor(sync)}%`), h("div", { class: "meter" }, h("i", { style: { width: Math.min(100, sync) + "%" } }))) : null));
       });
-      const ready = S.pods.filter((p) => p.phase === "Running" && !p.dying).length;
-      metrics.innerHTML = `<span>${t("lab.k8s.desired")} <b>${S.desired}</b></span><span>${t("lab.k8s.ready")} <b>${ready}/${S.desired}</b></span><span>nodes <b>${upNodes().length}/3</b></span><span>image <b>registry/logistics-api:2.4.1</b></span>`;
-      bar.style.width = Math.min(100, (ready / Math.max(1, S.desired)) * 100) + "%";
+
+      const online = SITES.filter((s) => S.up[s.id]).length;
+      const lats = SITES.filter((s) => !s.hq && S.up[s.id]).map((s) => s.lat + 2);
+      metrics.innerHTML = `<span>${t("lab.net.online")} <b>${online}/3</b></span><span>${t("lab.net.latency")} <b>${lats.length ? (lats.reduce((a, b) => a + b) / lats.length).toFixed(1) + " ms" : "—"}</b></span><span>VLANs <b>${VLANS.length}</b></span><span>${L({ fr: "équipements", en: "devices" })} <b>${SITES.length * DEVICES.length}</b></span>`;
+      root.querySelectorAll(".lab-btns .lb")[0].disabled = S.busy;
     }
 
     function tick() {
-      const ready = S.pods.filter((p) => p.phase === "Running" && !p.dying).length;
-      const demand = 900 + Math.sin(Date.now() / 3000) * 250 + rand(-60, 60);
-      const cap = ready * 260;
-      const served = Math.max(0, Math.min(demand, cap));
-      S.rps.push(served); if (S.rps.length > 60) S.rps.shift();
-      root.querySelector(".rps").textContent = Math.round(served) + " " + t("lab.k8s.rps");
-      root.querySelector(".thr").textContent = Math.round(served) + " req/s" + (served < demand - 5 ? " ⚠" : "");
-      sparkline(chart, S.rps, served < demand - 5 ? css("--warn") : css("--accent"), 1400);
-      if (++tickT % 2 === 0) reconcile();
+      let changed = false;
+      Object.keys(S.sync).forEach((id) => {
+        if (S.sync[id] < 100) { S.sync[id] += rand(4, 9); changed = true; if (S.sync[id] >= 100) { S.sync[id] = 100; log(`NAS ${SITES.find((s) => s.id === id).name}: ${L({ fr: "réplication terminée ✓", en: "replication complete ✓" })}`, "ok"); } }
+      });
+      if (changed) render();
+      const syncing = Object.values(S.sync).filter((v) => v < 100).length;
+      const v = (SITES.filter((s) => !s.hq && S.up[s.id]).length * 40 + syncing * 180) * rand(.85, 1.15);
+      S.thr.push(v); if (S.thr.length > 60) S.thr.shift();
+      root.querySelector(".thr").textContent = Math.round(v) + " Mbit/s";
+      sparkline(chart, S.thr, css("--accent"), 500);
     }
 
-    log("cluster bootstrap: 3 workers joined", "ok");
+    log(L({ fr: "3 sites connectés : Casablanca (siège), Tanger, Agadir", en: "3 sites connected: Casablanca (HQ), Tangier, Agadir" }), "ok");
     render();
-    return {
-      start() { if (!timer) { timer = setInterval(tick, 500); } },
-      stop() { clearInterval(timer); timer = 0; }
-    };
+    return { start() { if (!timer) timer = setInterval(tick, 500); }, stop() { clearInterval(timer); timer = 0; } };
   }
 
   /* =====================================================================
@@ -129,6 +156,7 @@
         { name: "pve-03", up: true, vms: ["vm-103", "ct-201"], osds: [4, 5] }
       ],
       osdState: {}, // id → "up" | "out" | "backfill"
+      legacy: ["vm-104", "vm-105", "vm-106", "ct-202"], // VMs encore sur l'ancien serveur
       health: "HEALTH_OK", iops: [], lat: [], net: [], mode: "idle", recovering: 0
     };
     for (let i = 0; i < 6; i++) S.osdState[i] = "up";
@@ -139,19 +167,19 @@
     const quorumEl = h("b", {}, "3/3");
     const title = h("p", { class: "lab-title mono" }, h("span", { class: "dot ok" }), t("lab.pve.title"));
     const btns = h("div", { class: "lab-btns" },
-      h("button", { class: "lb", onclick: () => bench("fio") }, t("lab.pve.bench")),
-      h("button", { class: "lb", onclick: () => bench("iperf") }, t("lab.pve.iperf")),
+      h("button", { class: "lb", onclick: migrate }, "⇢ " + t("lab.pve.migrate")),
       h("button", { class: "lb", onclick: healAll }, t("lab.pve.heal")));
     const grid = h("div", { class: "pve-grid" });
+    const legacyEl = h("div", { class: "pve-legacy" });
     const mk = (label, unit) => { const c = h("canvas"), v = h("b", {}, "0"); return { el: h("div", { class: "chart" }, h("div", { class: "chart-h" }, label, h("span", {}, v, " " + unit)), c), c, v }; };
-    const cIops = mk("IOPS (fio randrw 4k)", ""), cLat = mk("latency", "ms"), cNet = mk("iperf3 cluster net", "Gbit/s");
+    const cIops = mk("IOPS Ceph", ""), cLat = mk(L({ fr: "latence", en: "latency" }), "ms"), cNet = mk(L({ fr: "réseau cluster", en: "cluster network" }), "Gbit/s");
     const metrics = h("div", { class: "lab-metrics" }, h("span", {}, t("lab.pve.health") + " ", healthEl), h("span", {}, t("lab.pve.quorum") + " ", quorumEl), h("span", {}, "pool ", h("b", {}, "rbd · size=3 min_size=2")), h("span", { class: "pgs" }));
     const logEl = h("div", { class: "lab-log" }); const log = logger(logEl);
     root.append(h("div", { class: "lab" },
       h("div", { class: "lab-top" }, title, btns),
       h("p", { class: "lab-hint" }, t("lab.pve.hint")),
       metrics,
-      h("div", { class: "lab-stage" }, grid, h("div", { class: "pve-charts" }, cIops.el, cLat.el, cNet.el)),
+      h("div", { class: "lab-stage" }, legacyEl, grid, h("div", { class: "pve-charts" }, cIops.el, cLat.el, cNet.el)),
       logEl));
 
     grid.addEventListener("click", (e) => {
@@ -199,20 +227,19 @@
 
     function healAll() { S.nodes.forEach((n, i) => { if (!n.up) recover(i); }); }
 
-    async function bench(kind) {
-      if (S.mode !== "idle") return;
-      S.mode = kind; render();
-      if (kind === "fio") {
-        log("fio --name=randrw --rw=randrw --bs=4k --iodepth=32 --numjobs=4 --runtime=10 --filename=/dev/rbd0", "d");
-        await sleep(5000);
-        const deg = S.health !== "HEALTH_OK";
-        const io = Math.round((deg ? 18000 : 32000) * rand(.92, 1.06));
-        log(`fio: read: IOPS=${(io * .5 / 1000).toFixed(1)}k, write: IOPS=${(io * .5 / 1000).toFixed(1)}k, clat avg=${(deg ? 2.9 : 1.4).toFixed(1)}ms`, "ok");
-      } else {
-        log("iperf3 -c 10.10.10.2 -P 4 -t 10   # ceph cluster network", "d");
-        await sleep(5000);
-        log(`iperf3: [SUM] 0.00-10.00 sec  ${(rand(10.8, 11.6)).toFixed(1)} GBytes  ${(rand(9.2, 9.6)).toFixed(2)} Gbits/sec  receiver`, "ok");
-      }
+    /* migration d'une VM de l'ancien serveur vers le nœud le moins chargé */
+    async function migrate() {
+      if (S.mode !== "idle" || !S.legacy.length) return;
+      const ups = S.nodes.map((n, j) => (n.up ? j : -1)).filter((j) => j >= 0).sort((a, b) => S.nodes[a].vms.length - S.nodes[b].vms.length);
+      if (!ups.length) return;
+      const vm = S.legacy[0], tgt = S.nodes[ups[0]];
+      S.mode = "migrate"; S.legacy[0] = vm + "*"; render();
+      log(`${vm}: ${L({ fr: "export depuis l'ancien serveur, import du disque sur Ceph RBD", en: "export from old server, disk import to Ceph RBD" })} → ${tgt.name}`, "d");
+      await sleep(2600);
+      if (!tgt.up) { S.legacy[0] = vm; log(`${vm}: ${L({ fr: "migration annulée, nœud cible hors ligne", en: "migration cancelled, target node offline" })}`, "e"); S.mode = "idle"; render(); return; }
+      S.legacy.shift(); tgt.vms.push(vm);
+      log(`${vm}: ${L({ fr: "démarrée sur", en: "started on" })} ${tgt.name}, ${L({ fr: "protégée par la HA", en: "protected by HA" })} ✓`, "ok");
+      if (!S.legacy.length) log(L({ fr: "Toutes les VMs sont sur le cluster : l'ancien serveur peut être retiré.", en: "All VMs are on the cluster: the old server can be retired." }), "ok");
       S.mode = "idle"; render();
     }
 
@@ -230,7 +257,11 @@
       healthEl.className = "health " + st; healthEl.textContent = S.health;
       quorumEl.textContent = upCount() + "/3";
       root.querySelector(".pgs").innerHTML = S.recovering > 0 ? `recovery <b>${Math.round(100 - S.recovering)}%</b>` : `PGs <b>128 active+clean</b>`;
-      root.querySelectorAll(".lb").forEach((b, k) => (b.disabled = k < 2 && S.mode !== "idle"));
+      legacyEl.innerHTML = "";
+      legacyEl.append(h("span", { class: "pve-row" }, t("lab.pve.legacy")),
+        S.legacy.length ? h("div", { class: "vms" }, S.legacy.map((v) => h("span", { class: "vm legacy" + (v.endsWith("*") ? " migrating" : "") }, v.replace("*", ""))))
+          : h("span", { class: "legacy-done" }, L({ fr: "vide — toutes les VMs sont sur le cluster ✓", en: "empty — all VMs are on the cluster ✓" })));
+      root.querySelector(".lab-btns .lb").disabled = S.mode !== "idle" || !S.legacy.length;
     }
 
     function tick() {
@@ -246,13 +277,13 @@
         render();
       }
       const deg = S.health !== "HEALTH_OK";
-      const fio = S.mode === "fio";
-      const iops = fio ? (deg ? 18000 : 32000) * rand(.9, 1.08) : rand(800, 1600) * (deg ? 1.6 : 1);
-      const lat = fio ? (deg ? 2.9 : 1.4) * rand(.85, 1.2) : rand(.3, .6) * (deg ? 2 : 1);
-      const net = S.mode === "iperf" ? rand(9.1, 9.6) : (S.recovering > 0 ? rand(4, 7) : rand(.2, .8));
+      const mig = S.mode === "migrate";
+      const iops = (mig ? rand(6000, 9000) : rand(800, 1600)) * (deg ? 1.6 : 1);
+      const lat = (mig ? rand(.8, 1.3) : rand(.3, .6)) * (deg ? 2 : 1);
+      const net = mig ? rand(5, 8) : (S.recovering > 0 ? rand(4, 7) : rand(.2, .8));
       for (const [arr, v] of [[S.iops, iops], [S.lat, lat], [S.net, net]]) { arr.push(v); if (arr.length > 60) arr.shift(); }
       cIops.v.textContent = Math.round(iops).toLocaleString(); cLat.v.textContent = lat.toFixed(2); cNet.v.textContent = net.toFixed(2);
-      sparkline(cIops.c, S.iops, css("--accent"), 38000);
+      sparkline(cIops.c, S.iops, css("--accent"), 16000);
       sparkline(cLat.c, S.lat, deg ? css("--warn") : css("--accent-2"), 4);
       sparkline(cNet.c, S.net, css("--accent-3"), 10);
     }
@@ -270,17 +301,17 @@
     const STAGES = [
       { k: "checkout", icon: "⎇", label: "checkout", logs: ["actions/checkout@v4", "HEAD is now at {sha} {msg}"] },
       { k: "lint", icon: "≡", label: "lint", logs: ["ruff check app/ — 0 errors", "eslint src/ --max-warnings=0 ✓"] },
-      { k: "test", icon: "✓", label: "pytest", logs: ["pytest -q --cov=app", "collected 84 items", "84 passed in 6.21s — coverage 91%"], failLogs: ["pytest -q --cov=app", "collected 84 items", "FAILED tests/test_auth.py::test_token_expiry — AssertionError: 200 != 401", "1 failed, 83 passed in 6.40s"] },
-      { k: "sast", icon: "⛨", label: "SAST", logs: ["bandit -r app/ — No issues identified", "npm audit --audit-level=high — 0 vulnerabilities"] },
+      { k: "test", icon: "✓", label: "pytest", logs: ["pytest -q --cov=app", "collected 84 items", "84 passed in 6.21s — coverage 91%"], failLogs: ["pytest -q --cov=app", "collected 84 items", "FAILED tests/test_rdv.py::test_creneau_deja_reserve — AssertionError: 201 != 409", "1 failed, 83 passed in 6.40s"] },
+      { k: "audit", icon: "⛨", label: "audit", logs: ["pip-audit — No known vulnerabilities found", "npm audit --audit-level=high — 0 vulnerabilities"] },
       { k: "build", icon: "▣", label: "docker build", logs: ["docker buildx build -t api:{sha} .", "=> exporting layers 2.1s", "image size 142MB"] },
-      { k: "push", icon: "⇪", label: "push", logs: ["docker push ghcr.io/smb/api:{sha}", "digest: sha256:{dig}"] },
+      { k: "push", icon: "⇪", label: "push", logs: ["docker push registry.local/rdv-api:{sha}", "digest: sha256:{dig}"] },
       { k: "deploy", icon: "🚀", label: "deploy", logs: ["docker compose pull && docker compose up -d", "healthcheck GET /health → 200 OK", "deployed ✓"] }
     ];
-    const MSGS = ["feat(api): add JWT refresh endpoint", "fix(ui): debounce search input", "perf(db): add index on orders.created_at", "chore(ci): cache pip deps", "feat(front): dashboard charts", "refactor(api): pydantic v2 schemas"];
+    const MSGS = ["feat(api): endpoint de réservation de créneau", "feat(front): calendrier des rendez-vous", "fix(api): refuser un créneau déjà réservé", "feat(front): formulaire de prise de rendez-vous", "chore(ci): cache des dépendances", "fix(front): affichage des créneaux sur mobile"];
     let running = false, bug = false, runs = 0, okRuns = 0;
 
     root.innerHTML = "";
-    const title = h("p", { class: "lab-title mono" }, h("span", { class: "dot info" }), t("lab.ci.title"), h("span", { class: "tag" }, ".github/workflows/ci.yml"));
+    const title = h("p", { class: "lab-title mono" }, h("span", { class: "dot info" }), t("lab.ci.title"), h("span", { class: "tag" }, L({ fr: "logiciel de prise de rendez-vous", en: "appointment-booking app" })));
     const pushBtn = h("button", { class: "lb", onclick: run }, "▶ " + t("lab.ci.push"));
     const bugBtn = h("button", { class: "lb danger", onclick: () => { bug = !bug; bugBtn.classList.toggle("on", bug); } }, "🐛 " + t("lab.ci.bug"));
     const flow = h("div", { class: "ci-flow" });
@@ -326,7 +357,7 @@
     return { start() {}, stop() {} };
   }
 
-  const LABS = { k8s: k8sLab, pve: pveLab, ci: ciLab };
+  const LABS = { net: netLab, pve: pveLab, ci: ciLab };
   const instances = new Map();
 
   /* monte (ou remonte après changement de langue) un lab dans un conteneur */

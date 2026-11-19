@@ -563,3 +563,46 @@ body.noc { --accent: #ff3e8a; --accent-2: #ffd23e; --accent-3: #3ee8c5; }
   body { background: #fff; color: #000; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ==================== NET LAB (multi-sites) ==================== */
+.lb.sel { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.wan-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 12px; }
+.wan-label { color: var(--faint); letter-spacing: .1em; margin-right: 4px; }
+.wan-link { display: inline-flex; align-items: center; gap: 8px; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); font: 500 12px var(--mono); transition: border-color .2s, background .2s; }
+.wan-link small { color: var(--faint); }
+.wan-link:hover { border-color: var(--accent); }
+.wan-link.down { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 8%, var(--surface)); }
+.net-sites { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.net-site { border: 1px solid var(--line-2); border-radius: 12px; padding: 12px; background: var(--surface); transition: border-color .3s, background .3s; min-width: 0; }
+.net-site.down { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 6%, var(--surface)); }
+.net-site h5 { margin: 0 0 10px; font: 600 13px var(--mono); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.net-site h5 small { font-weight: 400; font-size: 10.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+.devices { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.devices li { display: grid; grid-template-columns: 8px auto 1fr; align-items: center; gap: 8px; font-size: 12.5px; }
+.devices li b { font: 600 11.5px var(--mono); }
+.devices li span:last-child { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vlans { display: grid; gap: 5px; }
+.vlan { display: grid; grid-template-columns: auto 1fr; gap: 0 8px; padding: 5px 8px; border-radius: 7px; border-left: 3px solid var(--c); background: var(--surface-2); font-size: 11.5px; }
+.vlan b { font: 600 11px var(--mono); color: var(--c); }
+.vlan small { grid-column: 1 / -1; font: 10.5px var(--mono); color: var(--faint); }
+.vlan.v10 { --c: var(--accent-2); } .vlan.v20 { --c: var(--accent); } .vlan.v30 { --c: var(--warn); } .vlan.v99 { --c: var(--accent-3); }
+.sync { margin-top: 10px; display: grid; gap: 5px; font: 11px var(--mono); color: var(--muted); }
+.sync .meter i { transition: width .45s var(--ease); }
+.pve-legacy { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; margin-bottom: 12px; border: 1px dashed var(--line-2); border-radius: 10px; }
+.pve-legacy .pve-row { margin: 0; }
+.vm.legacy { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+.legacy-done { font: 12px var(--mono); color: var(--ok); }
+
+/* certifications & savoir-être */
+.cert-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.cert-list li { display: grid; gap: 1px; padding-left: 20px; position: relative; font-size: 14px; }
+.cert-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font: 700 13px var(--mono); }
+.cert-list li span { color: var(--faint); font: 12px var(--mono); }
+.cert-also { margin: 14px 0 0; color: var(--faint); font-size: 13px; }
+.soft-src { margin: -6px 0 14px; color: var(--muted); font-style: italic; font-size: 14px; }
+
+@media (max-width: 640px) {
+  .net-sites { grid-template-columns: 1fr; }
+}
+.edu-grid > .card:nth-child(2) { grid-column: 1 / -1; }
+@media (min-width: 881px) { .cert-list { grid-template-columns: 1fr 1fr; column-gap: 28px; } }

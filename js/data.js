@@ -1,6 +1,7 @@
 /* ==========================================================================
    DATA — tout le contenu du portfolio (FR / EN), source unique de vérité.
-   Modifier ce fichier suffit pour mettre à jour le site.
+   Aligné sur le CV (cv_base, novembre 2026). Modifier ce fichier suffit
+   pour mettre à jour le site.
    ========================================================================== */
 window.App = window.App || {};
 
@@ -9,12 +10,12 @@ App.profile = {
   short: "Ziyad Benabdeljalil",
   handle: "ziyad",
   email: "ziyadbenabdeljalil@gmail.com",
-  phone: "+212 701 253 117",
+  phone: "+212 7 01 25 31 17",
   phoneRaw: "+212701253117",
-  location: "Maroc · Mobilité internationale",
   cv: "assets/CV_Ziyad_Benabdeljalil.pdf",
   photo: "assets/photo.jpg",
-  linkedin: "", // ← ajoute ton URL LinkedIn ici
+  linkedin: "https://www.linkedin.com/in/mohame-ziyad-benabdeljalil-9b34a6268",
+  linkedinLabel: "mohame-ziyad-benabdeljalil",
   github: "https://github.com/SorenBe"
 };
 
@@ -31,71 +32,72 @@ App.i18n = {
 
     "boot.skip": "Appuyez sur une touche pour passer",
 
-    "hero.status": "Disponible — CDI · CDD · Alternance",
+    "hero.status": "Recherche : CDI · CDD · Alternance",
     "hero.prefix": "Ingénieur d'État",
-    "hero.roles": ["Informatique & Réseaux", "Cloud & DevOps", "Développement Full-Stack", "Infrastructure hyperconvergée", "IA & Data"],
-    "hero.pitch": "Diplômé MIAGE de l'EMSI, je conçois des systèmes de bout en bout : du code applicatif jusqu'au cluster qui l'héberge — APIs, conteneurs, pipelines CI/CD, stockage distribué et réseau.",
+    "hero.roles": ["Informatique & Réseaux", "Infrastructure réseau multi-sites", "Virtualisation & Cloud", "Développement Full-Stack", "Data & IA"],
+    "hero.pitch": "Ingénieur d'État diplômé de l'EMSI (filière MIAGE, 2026), à l'aise entre la technique et les besoins métier : réseau et stockage multi-sites, virtualisation hyperconvergée, développement web.",
     "hero.cta.projects": "Explorer mon travail",
-    "hero.cta.cv": "Télécharger le CV",
+    "hero.cta.cv": "Voir le CV",
     "hero.cta.terminal": "Ouvrir le terminal",
     "hero.scroll": "défiler",
-    "hero.mobility": "Maroc & International · Présentiel / Hybride / Télétravail",
+    "hero.mobility": "France, Maroc ou télétravail",
 
-    "about.kicker": "01 — Profil",
-    "about.title": "Du code jusqu'au rack.",
-    "about.p1": "Ingénieur d'État en Informatique & Réseaux, j'ai construit mon parcours à la frontière entre le <strong>développement logiciel</strong>, l'<strong>architecture cloud/DevOps</strong> et l'<strong>infrastructure réseau</strong>.",
-    "about.p2": "En trois expériences en entreprise — en France et au Maroc — j'ai livré une API REST sécurisée avec son frontend React et sa chaîne CI/CD, déployé un cluster hyperconvergé Proxmox VE + Ceph à haute disponibilité, puis conçu des solutions logicielles conteneurisées pour la logistique maritime chez CMA CGM.",
-    "about.p3": "Ce qui me motive : comprendre un système dans son ensemble, le mesurer, puis le rendre plus fiable.",
-    "about.stat.exp": "expériences en entreprise",
-    "about.stat.years": "ans de formation ingénieur",
+    "about.kicker": "Profil",
+    "about.title": "Du besoin métier à l'infrastructure.",
+    "about.p1": "Ingénieur d'État en informatique et réseaux (EMSI, filière MIAGE, 2026), je suis à l'aise entre <strong>la technique</strong> et <strong>les besoins métier</strong>.",
+    "about.p2": "Trois stages — infrastructure multi-sites chez CMA CGM, virtualisation hyperconvergée chez Emerge Invest, développement web en France chez SMB-Industries — m'ont appris à analyser un besoin, à le traduire en solution concrète et à la documenter clairement.",
+    "about.p3": "Je recherche un CDI, un CDD ou une alternance, en France, au Maroc ou en télétravail.",
+    "about.stat.exp": "stages en entreprise",
+    "about.stat.years": "ans de cycle ingénieur",
     "about.stat.projects": "projets académiques",
-    "about.stat.langs": "langues parlées",
-    "about.stat.tech": "technologies maîtrisées",
+    "about.stat.certs": "certifications Coursera",
+    "about.stat.tech": "compétences techniques",
 
-    "exp.kicker": "02 — Expériences",
-    "exp.title": "Trois missions, trois couches de la stack.",
-    "exp.sub": "Chaque mission est accompagnée d'un <em>lab interactif</em> qui simule le type de système sur lequel j'ai travaillé. Manipulez-le.",
+    "exp.kicker": "Expériences",
+    "exp.title": "Trois stages, trois couches de l'infrastructure.",
+    "exp.sub": "Chaque stage est accompagné d'un <em>lab interactif</em> : une simulation illustrative du type de système concerné (noms et valeurs fictifs). Manipulez-le.",
     "exp.tab.missions": "Missions",
     "exp.tab.lab": "Lab interactif",
-    "exp.tab.stack": "Stack",
+    "exp.tab.stack": "Outils",
 
-    "lab.k8s.title": "Orchestrateur de conteneurs",
-    "lab.k8s.hint": "Faites évoluer le nombre de réplicas, tuez un pod ou un nœud : l'ordonnanceur rétablit l'état désiré.",
-    "lab.k8s.scaleUp": "+ réplica",
-    "lab.k8s.scaleDown": "− réplica",
-    "lab.k8s.kill": "Tuer un pod",
-    "lab.k8s.drain": "Panne nœud",
-    "lab.k8s.reset": "Réinitialiser",
-    "lab.k8s.desired": "désirés",
-    "lab.k8s.ready": "prêts",
-    "lab.k8s.rps": "req/s",
+    "lab.net.title": "Réseau & stockage multi-sites",
+    "lab.net.hint": "Simulation illustrative. Cliquez sur le lien WAN d'un site pour le couper, testez la connectivité, lancez une réplication NAS ou générez la documentation.",
+    "lab.net.ping": "Tester la connectivité",
+    "lab.net.sync": "Réplication NAS",
+    "lab.net.vlan": "Vue VLAN",
+    "lab.net.doc": "Générer la doc",
+    "lab.net.online": "sites en ligne",
+    "lab.net.latency": "latence moy.",
+    "lab.net.hq": "Siège",
+    "lab.net.branch": "Site régional",
+    "lab.net.wan": "WAN",
 
     "lab.pve.title": "Cluster Proxmox VE + Ceph (HA)",
-    "lab.pve.hint": "Cliquez sur un nœud pour simuler une panne matérielle. Observez la bascule HA des VMs et la reconstruction Ceph.",
-    "lab.pve.bench": "Lancer fio",
-    "lab.pve.iperf": "Lancer iperf3",
+    "lab.pve.hint": "Simulation illustrative. Migrez les VMs de l'ancien serveur vers le cluster, puis cliquez sur un nœud pour simuler une panne : la haute disponibilité redémarre ses VMs ailleurs.",
+    "lab.pve.migrate": "Migrer une VM",
     "lab.pve.heal": "Réparer tout",
     "lab.pve.health": "Santé Ceph",
     "lab.pve.quorum": "Quorum",
+    "lab.pve.legacy": "Ancien serveur",
 
-    "lab.ci.title": "Pipeline CI/CD GitHub Actions",
-    "lab.ci.hint": "Déclenchez un push. Activez « bug » pour injecter une régression et voir le pipeline la bloquer avant la prod.",
+    "lab.ci.title": "Pipeline CI/CD",
+    "lab.ci.hint": "Simulation illustrative. Déclenchez un push. Activez « bug » pour injecter une régression et voir le pipeline la bloquer avant la mise en production.",
     "lab.ci.push": "git push",
     "lab.ci.bug": "Injecter un bug",
     "lab.ci.idle": "En attente d'un commit…",
 
-    "skills.kicker": "03 — Compétences",
+    "skills.kicker": "Compétences",
     "skills.title": "Une carte, pas une liste.",
-    "skills.sub": "Graphe de force : chaque technologie est reliée aux missions et projets où je l'ai mise en œuvre. Glissez les nœuds, survolez pour révéler les liens.",
+    "skills.sub": "Graphe de force : chaque compétence est reliée aux stages et projets où je l'ai mise en œuvre. Glissez les nœuds, survolez pour révéler les liens.",
     "skills.all": "Tout",
-    "skills.legend.skill": "Technologie",
-    "skills.legend.work": "Mission / projet",
+    "skills.legend.skill": "Compétence",
+    "skills.legend.work": "Stage / projet",
     "skills.usedIn": "Mise en œuvre dans",
     "skills.none": "Compétence issue de la formation et des certifications.",
 
-    "proj.kicker": "04 — Projets",
+    "proj.kicker": "Projets",
     "proj.title": "Projets académiques.",
-    "proj.sub": "Six projets menés pendant le cycle ingénieur, du système distribué à la vision par ordinateur.",
+    "proj.sub": "Six projets menés pendant le cycle ingénieur, de l'architecture distribuée à l'intelligence artificielle.",
     "proj.all": "Tous",
     "proj.challenge": "Enjeu",
     "proj.approach": "Approche",
@@ -103,20 +105,21 @@ App.i18n = {
     "proj.close": "Fermer",
     "proj.open": "Détails",
 
-    "term.kicker": "05 — Terminal",
+    "term.kicker": "Terminal",
     "term.title": "Interrogez-moi en ligne de commande.",
     "term.sub": "Tapez <code>help</code> pour la liste des commandes. Tab pour l'auto-complétion, ↑/↓ pour l'historique.",
 
-    "edu.kicker": "06 — Formation",
+    "edu.kicker": "Formation",
     "edu.title": "Formation & certifications.",
-    "edu.certs": "Certifications",
+    "edu.certs": "Certifications (Coursera)",
     "edu.langs": "Langues",
     "edu.soft": "Savoir-être",
-    "edu.interests": "Engagements & intérêts",
+    "edu.interests": "Centres d'intérêt",
+    "edu.also": "Également",
 
-    "contact.kicker": "07 — Contact",
+    "contact.kicker": "Contact",
     "contact.title": "Construisons quelque chose de fiable.",
-    "contact.sub": "Je recherche un poste en CDI, CDD ou alternance — au Maroc ou à l'international, en présentiel, hybride ou télétravail.",
+    "contact.sub": "Je recherche un CDI, un CDD ou une alternance — en France, au Maroc ou en télétravail.",
     "contact.name": "Votre nom",
     "contact.company": "Entreprise",
     "contact.subject": "Objet",
@@ -128,7 +131,7 @@ App.i18n = {
     "contact.download": "CV (PDF)",
     "contact.opening": "Ouverture de votre client mail…",
     "contact.required": "Merci de remplir votre nom et votre message.",
-    "contact.subjects": ["Opportunité CDI", "Opportunité CDD", "Alternance", "Mission / freelance", "Autre"],
+    "contact.subjects": ["Opportunité CDI", "Opportunité CDD", "Alternance", "Autre"],
 
     "footer.built": "Conçu et codé à la main — HTML, CSS & JavaScript natif, zéro framework.",
     "footer.latency": "latence",
@@ -154,71 +157,72 @@ App.i18n = {
 
     "boot.skip": "Press any key to skip",
 
-    "hero.status": "Open to work — Permanent · Fixed-term · Work-study",
+    "hero.status": "Looking for: permanent · fixed-term · work-study",
     "hero.prefix": "State-certified Engineer",
-    "hero.roles": ["Computer Science & Networks", "Cloud & DevOps", "Full-Stack Development", "Hyperconverged Infrastructure", "AI & Data"],
-    "hero.pitch": "MIAGE graduate from EMSI, I build systems end to end: from application code down to the cluster that runs it — APIs, containers, CI/CD pipelines, distributed storage and networking.",
+    "hero.roles": ["Computer Science & Networks", "Multi-site network infrastructure", "Virtualisation & Cloud", "Full-Stack Development", "Data & AI"],
+    "hero.pitch": "State-certified engineer from EMSI (MIAGE track, 2026), comfortable between technology and business needs: multi-site networking and storage, hyperconverged virtualisation, web development.",
     "hero.cta.projects": "Explore my work",
-    "hero.cta.cv": "Download résumé",
+    "hero.cta.cv": "View résumé",
     "hero.cta.terminal": "Open the terminal",
     "hero.scroll": "scroll",
-    "hero.mobility": "Morocco & International · On-site / Hybrid / Remote",
+    "hero.mobility": "France, Morocco or remote",
 
-    "about.kicker": "01 — Profile",
-    "about.title": "From code to rack.",
-    "about.p1": "As a state-certified engineer in Computer Science & Networks, I've built my path at the crossroads of <strong>software development</strong>, <strong>cloud/DevOps architecture</strong> and <strong>network infrastructure</strong>.",
-    "about.p2": "Across three industry roles — in France and Morocco — I shipped a secured REST API with its React frontend and CI/CD chain, deployed a highly available Proxmox VE + Ceph hyperconverged cluster, then designed containerised software for maritime logistics at CMA CGM.",
-    "about.p3": "What drives me: understanding a system as a whole, measuring it, then making it more reliable.",
-    "about.stat.exp": "industry roles",
+    "about.kicker": "Profile",
+    "about.title": "From business need to infrastructure.",
+    "about.p1": "State-certified engineer in computer science and networks (EMSI, MIAGE track, 2026), I'm comfortable between <strong>technology</strong> and <strong>business needs</strong>.",
+    "about.p2": "Three internships — multi-site infrastructure at CMA CGM, hyperconverged virtualisation at Emerge Invest, web development in France at SMB-Industries — taught me to analyse a need, turn it into a concrete solution and document it clearly.",
+    "about.p3": "I'm looking for a permanent, fixed-term or work-study position, in France, Morocco or remote.",
+    "about.stat.exp": "internships",
     "about.stat.years": "years of engineering school",
     "about.stat.projects": "academic projects",
-    "about.stat.langs": "spoken languages",
-    "about.stat.tech": "technologies",
+    "about.stat.certs": "Coursera certificates",
+    "about.stat.tech": "technical skills",
 
-    "exp.kicker": "02 — Experience",
-    "exp.title": "Three roles, three layers of the stack.",
-    "exp.sub": "Each role comes with an <em>interactive lab</em> simulating the kind of system I worked on. Play with it.",
+    "exp.kicker": "Experience",
+    "exp.title": "Three internships, three layers of infrastructure.",
+    "exp.sub": "Each internship comes with an <em>interactive lab</em>: an illustrative simulation of the kind of system involved (names and values are fictional). Play with it.",
     "exp.tab.missions": "Missions",
     "exp.tab.lab": "Interactive lab",
-    "exp.tab.stack": "Stack",
+    "exp.tab.stack": "Tools",
 
-    "lab.k8s.title": "Container orchestrator",
-    "lab.k8s.hint": "Scale replicas, kill a pod or a node: the scheduler restores the desired state.",
-    "lab.k8s.scaleUp": "+ replica",
-    "lab.k8s.scaleDown": "− replica",
-    "lab.k8s.kill": "Kill a pod",
-    "lab.k8s.drain": "Node failure",
-    "lab.k8s.reset": "Reset",
-    "lab.k8s.desired": "desired",
-    "lab.k8s.ready": "ready",
-    "lab.k8s.rps": "req/s",
+    "lab.net.title": "Multi-site network & storage",
+    "lab.net.hint": "Illustrative simulation. Click a site's WAN link to cut it, test connectivity, run a NAS replication or generate the documentation.",
+    "lab.net.ping": "Test connectivity",
+    "lab.net.sync": "NAS replication",
+    "lab.net.vlan": "VLAN view",
+    "lab.net.doc": "Generate docs",
+    "lab.net.online": "sites online",
+    "lab.net.latency": "avg latency",
+    "lab.net.hq": "Head office",
+    "lab.net.branch": "Regional site",
+    "lab.net.wan": "WAN",
 
     "lab.pve.title": "Proxmox VE + Ceph cluster (HA)",
-    "lab.pve.hint": "Click a node to simulate a hardware failure. Watch VMs fail over and Ceph rebuild.",
-    "lab.pve.bench": "Run fio",
-    "lab.pve.iperf": "Run iperf3",
+    "lab.pve.hint": "Illustrative simulation. Migrate VMs from the old server to the cluster, then click a node to simulate a failure: high availability restarts its VMs elsewhere.",
+    "lab.pve.migrate": "Migrate a VM",
     "lab.pve.heal": "Repair all",
     "lab.pve.health": "Ceph health",
     "lab.pve.quorum": "Quorum",
+    "lab.pve.legacy": "Old server",
 
-    "lab.ci.title": "GitHub Actions CI/CD pipeline",
-    "lab.ci.hint": "Trigger a push. Toggle “bug” to inject a regression and watch the pipeline stop it before production.",
+    "lab.ci.title": "CI/CD pipeline",
+    "lab.ci.hint": "Illustrative simulation. Trigger a push. Toggle “bug” to inject a regression and watch the pipeline stop it before production.",
     "lab.ci.push": "git push",
     "lab.ci.bug": "Inject a bug",
     "lab.ci.idle": "Waiting for a commit…",
 
-    "skills.kicker": "03 — Skills",
+    "skills.kicker": "Skills",
     "skills.title": "A map, not a list.",
-    "skills.sub": "Force-directed graph: every technology is linked to the roles and projects where I used it. Drag nodes, hover to reveal links.",
+    "skills.sub": "Force-directed graph: every skill is linked to the internships and projects where I used it. Drag nodes, hover to reveal links.",
     "skills.all": "All",
-    "skills.legend.skill": "Technology",
-    "skills.legend.work": "Role / project",
+    "skills.legend.skill": "Skill",
+    "skills.legend.work": "Internship / project",
     "skills.usedIn": "Used in",
     "skills.none": "Skill from coursework and certifications.",
 
-    "proj.kicker": "04 — Projects",
+    "proj.kicker": "Projects",
     "proj.title": "Academic projects.",
-    "proj.sub": "Six projects built during engineering school, from distributed systems to computer vision.",
+    "proj.sub": "Six projects built during engineering school, from distributed architecture to artificial intelligence.",
     "proj.all": "All",
     "proj.challenge": "Challenge",
     "proj.approach": "Approach",
@@ -226,20 +230,21 @@ App.i18n = {
     "proj.close": "Close",
     "proj.open": "Details",
 
-    "term.kicker": "05 — Terminal",
+    "term.kicker": "Terminal",
     "term.title": "Query me from the command line.",
     "term.sub": "Type <code>help</code> to list commands. Tab to autocomplete, ↑/↓ for history.",
 
-    "edu.kicker": "06 — Education",
+    "edu.kicker": "Education",
     "edu.title": "Education & certifications.",
-    "edu.certs": "Certifications",
+    "edu.certs": "Certifications (Coursera)",
     "edu.langs": "Languages",
     "edu.soft": "Soft skills",
-    "edu.interests": "Commitments & interests",
+    "edu.interests": "Interests",
+    "edu.also": "Also",
 
-    "contact.kicker": "07 — Contact",
+    "contact.kicker": "Contact",
     "contact.title": "Let's build something reliable.",
-    "contact.sub": "I'm looking for a permanent, fixed-term or work-study position — in Morocco or abroad, on-site, hybrid or remote.",
+    "contact.sub": "I'm looking for a permanent, fixed-term or work-study position — in France, Morocco or remote.",
     "contact.name": "Your name",
     "contact.company": "Company",
     "contact.subject": "Subject",
@@ -251,7 +256,7 @@ App.i18n = {
     "contact.download": "Résumé (PDF)",
     "contact.opening": "Opening your mail client…",
     "contact.required": "Please fill in your name and message.",
-    "contact.subjects": ["Permanent position", "Fixed-term position", "Work-study", "Contract / freelance", "Other"],
+    "contact.subjects": ["Permanent position", "Fixed-term position", "Work-study", "Other"],
 
     "footer.built": "Designed and hand-coded — vanilla HTML, CSS & JavaScript, zero framework.",
     "footer.latency": "latency",
@@ -266,230 +271,218 @@ App.i18n = {
   }
 };
 
-/* ---------- Expériences ---------- */
+/* ---------- Expériences (texte repris du CV) ---------- */
 App.experiences = [
   {
     id: "cmacgm",
-    company: "CMA CGM",
-    period: { fr: "Fév. – Juil. 2026", en: "Feb. – Jul. 2026" },
-    place: { fr: "Maroc", en: "Morocco" },
-    role: { fr: "Stage de Fin d'Études (PFE)", en: "Final-Year Engineering Internship" },
-    domain: { fr: "Logistique & maritime", en: "Logistics & shipping" },
-    lab: "k8s",
+    company: "CMA CGM Maroc",
+    period: { fr: "févr. – août 2026", en: "Feb. – Aug. 2026" },
+    place: { fr: "Casablanca", en: "Casablanca" },
+    role: { fr: "Stage de fin d'études", en: "Final-year internship" },
+    domain: { fr: "Infrastructure réseau & stockage", en: "Network & storage infrastructure" },
+    lab: "net",
     missions: {
       fr: [
-        "Conception et développement de solutions informatiques dédiées à la gestion logistique et maritime.",
-        "Conteneurisation des services et intégration dans l'architecture système existante.",
-        "Optimisation des bases de données et sécurisation des échanges de données."
+        "Modernisation de l'infrastructure réseau et stockage de trois sites (Casablanca, Tanger, Agadir).",
+        "Équipements Cisco, Meraki, Dell et Synology ; schémas avant/après et documentation technique."
       ],
       en: [
-        "Designed and developed software solutions for logistics and maritime operations management.",
-        "Containerised services and integrated them into the existing system architecture.",
-        "Optimised databases and secured data exchanges."
+        "Modernised the network and storage infrastructure of three sites (Casablanca, Tangier, Agadir).",
+        "Cisco, Meraki, Dell and Synology equipment; before/after diagrams and technical documentation."
       ]
     },
-    stack: ["Docker", "Conteneurisation", "Bases de données", "Sécurité des échanges", "Architecture SI"]
+    stack: ["Cisco", "Meraki", "Dell", "Synology", "Documentation technique"]
   },
   {
     id: "emerge",
     company: "Emerge Invest",
-    period: { fr: "Juil. – Août 2025", en: "Jul. – Aug. 2025" },
+    period: { fr: "juil. – août 2025", en: "Jul. – Aug. 2025" },
     place: { fr: "Casablanca", en: "Casablanca" },
-    role: { fr: "Stage Ingénieur", en: "Engineering Internship" },
-    domain: { fr: "Infrastructure & virtualisation", en: "Infrastructure & virtualisation" },
+    role: { fr: "Stagiaire infrastructure & virtualisation", en: "Infrastructure & virtualisation intern" },
+    domain: { fr: "Virtualisation hyperconvergée", en: "Hyperconverged virtualisation" },
     lab: "pve",
     missions: {
       fr: [
-        "Conception et déploiement d'une architecture hyperconvergée : cluster Proxmox VE + stockage distribué Ceph.",
-        "Tests de performance et de haute disponibilité (bascule de VMs, perte de nœud).",
-        "Supervision et métrologie via Grafana, benchmarks disque avec fio et réseau avec iperf3."
+        "Conception de l'architecture d'un cluster hyperconvergé Proxmox VE + Ceph.",
+        "Mise en place de la haute disponibilité et migration des machines virtuelles vers le cluster."
       ],
       en: [
-        "Designed and deployed a hyperconverged architecture: Proxmox VE cluster + Ceph distributed storage.",
-        "Ran performance and high-availability tests (VM failover, node loss).",
-        "Monitoring with Grafana, disk benchmarks with fio and network benchmarks with iperf3."
+        "Designed the architecture of a hyperconverged Proxmox VE + Ceph cluster.",
+        "Set up high availability and migrated the virtual machines to the cluster."
       ]
     },
-    stack: ["Proxmox VE", "Ceph", "Grafana", "fio", "iperf3", "Haute disponibilité"]
+    stack: ["Proxmox VE", "Ceph", "Haute disponibilité", "Migration de VMs"]
   },
   {
     id: "smb",
     company: "SMB-Industries",
-    period: { fr: "Juil. – Août 2024", en: "Jul. – Aug. 2024" },
+    period: { fr: "juil. – août 2024", en: "Jul. – Aug. 2024" },
     place: { fr: "Montpellier, France", en: "Montpellier, France" },
-    role: { fr: "Stage Développeur", en: "Developer Internship" },
-    domain: { fr: "Développement full-stack", en: "Full-stack development" },
+    role: { fr: "Stagiaire développeur full-stack", en: "Full-stack developer intern" },
+    domain: { fr: "Développement web", en: "Web development" },
     lab: "ci",
     missions: {
       fr: [
-        "Backend & API : développement d'une API REST sécurisée avec FastAPI et PostgreSQL.",
-        "Frontend : conception d'une interface web dynamique en React.",
-        "DevOps : pipelines CI/CD avec GitHub Actions et conteneurisation Docker."
+        "Développement d'un logiciel de prise de rendez-vous : API FastAPI, interface React.",
+        "Conteneurisation Docker et pipeline CI/CD ; suivi de projet et des échéances."
       ],
       en: [
-        "Backend & API: built a secured REST API with FastAPI and PostgreSQL.",
-        "Frontend: designed a dynamic web interface in React.",
-        "DevOps: CI/CD pipelines with GitHub Actions and Docker containerisation."
+        "Built an appointment-booking application: FastAPI API, React interface.",
+        "Docker containerisation and CI/CD pipeline; project and deadline follow-up."
       ]
     },
-    stack: ["FastAPI", "PostgreSQL", "React", "GitHub Actions", "Docker", "REST"]
+    stack: ["FastAPI", "React", "Docker", "CI/CD", "Gestion de projet"]
   }
 ];
 
-/* ---------- Compétences ---------- */
+/* ---------- Compétences (catégories et éléments du CV) ---------- */
 App.skillCategories = [
-  { id: "lang",  fr: "Langages",        en: "Languages",        color: "#4da3ff" },
-  { id: "back",  fr: "Backend",          en: "Backend",          color: "#8f7bff" },
-  { id: "front", fr: "Frontend",         en: "Frontend",         color: "#ff7bd5" },
-  { id: "ops",   fr: "DevOps & Cloud",   en: "DevOps & Cloud",   color: "#3ee8c5" },
-  { id: "db",    fr: "Bases de données", en: "Databases",        color: "#ffb547" },
-  { id: "net",   fr: "Réseaux & Sécurité", en: "Networks & Security", color: "#ff6b6b" },
-  { id: "ai",    fr: "IA & Data",        en: "AI & Data",        color: "#b6f36b" },
-  { id: "erp",   fr: "ERP / CRM",        en: "ERP / CRM",        color: "#5ad1ff" }
+  { id: "net",  fr: "Réseaux & systèmes",     en: "Networks & systems",       color: "#ff6b6b" },
+  { id: "virt", fr: "Virtualisation & cloud", en: "Virtualisation & cloud",   color: "#3ee8c5" },
+  { id: "dev",  fr: "Développement",          en: "Development",              color: "#4da3ff" },
+  { id: "tool", fr: "Outils & méthodes",      en: "Tools & methods",          color: "#ffb547" },
+  { id: "ai",   fr: "Data & IA",              en: "Data & AI",                color: "#b6f36b" }
 ];
 
-/* links = ids d'expériences / projets où la techno est utilisée (d'après le CV) */
+/* links = ids de stages / projets où la compétence apparaît dans le CV */
 App.skills = [
-  { n: "Java",          c: "lang" },
-  { n: "Python",        c: "lang", links: ["smb", "face", "agri", "nlp"] },
-  { n: "C",             c: "lang" },
-  { n: "Dart",          c: "lang" },
-  { n: "JavaScript",    c: "lang", links: ["smb", "ecom"] },
-  { n: "Spring Boot",   c: "back" },
-  { n: "FastAPI",       c: "back", links: ["smb"] },
-  { n: "Flask",         c: "back" },
-  { n: "Django",        c: "back" },
-  { n: "J2EE",          c: "back" },
-  { n: "React",         c: "front", links: ["smb"] },
-  { n: "React Native",  c: "front" },
-  { n: "Tailwind CSS",  c: "front" },
-  { n: "HTML5/CSS3",    c: "front", links: ["ecom"] },
-  { n: "Docker",        c: "ops", links: ["smb", "cmacgm", "micro"] },
-  { n: "Kubernetes",    c: "ops", links: ["micro"] },
-  { n: "OpenShift",     c: "ops" },
-  { n: "Proxmox VE",    c: "ops", links: ["emerge"] },
-  { n: "Ceph",          c: "ops", links: ["emerge"] },
-  { n: "CI/CD",         c: "ops", links: ["smb", "devsecops"] },
-  { n: "Git",           c: "ops", links: ["smb", "devsecops"] },
-  { n: "Grafana",       c: "ops", links: ["emerge"] },
-  { n: "PostgreSQL",    c: "db", links: ["smb"] },
-  { n: "MySQL",         c: "db" },
-  { n: "MongoDB",       c: "db" },
-  { n: "Oracle",        c: "db" },
-  { n: "SQL Server",    c: "db" },
-  { n: "TCP/IP",        c: "net", links: ["emerge"] },
-  { n: "Wireshark",     c: "net" },
-  { n: "Cisco Packet Tracer", c: "net" },
-  { n: "SAST",          c: "net", links: ["devsecops"] },
-  { n: "OWASP",         c: "net", links: ["devsecops", "smb"] },
-  { n: "PyTorch",       c: "ai", links: ["face", "agri"] },
-  { n: "Réseaux siamois", en: "Siamese networks", c: "ai", links: ["face"] },
-  { n: "NLP",           c: "ai", links: ["nlp"] },
-  { n: "Classification d'images", en: "Image classification", c: "ai", links: ["agri"] },
-  { n: "Salesforce",    c: "erp" },
-  { n: "LWC / Apex",    c: "erp" }
+  { n: "Cisco",            c: "net", links: ["cmacgm"] },
+  { n: "Meraki",           c: "net", links: ["cmacgm"] },
+  { n: "VLAN",             c: "net" },
+  { n: "Wireshark",        c: "net" },
+  { n: "Packet Tracer",    c: "net" },
+  { n: "Linux/Unix",       c: "net" },
+  { n: "Proxmox VE",       c: "virt", links: ["emerge"] },
+  { n: "Ceph",             c: "virt", links: ["emerge"] },
+  { n: "Docker",           c: "virt", links: ["smb", "micro"] },
+  { n: "Kubernetes",       c: "virt", links: ["micro"] },
+  { n: "OpenShift",        c: "virt" },
+  { n: "Azure",            c: "virt" },
+  { n: "Python",           c: "dev", links: ["smb", "face", "agri", "nlp"] },
+  { n: "Java",             c: "dev", links: ["micro"] },
+  { n: "Spring Boot",      c: "dev", links: ["micro"] },
+  { n: "FastAPI",          c: "dev", links: ["smb"] },
+  { n: "React",            c: "dev", links: ["smb"] },
+  { n: "SQL/PostgreSQL",   c: "dev" },
+  { n: "Git/GitHub",       c: "tool" },
+  { n: "CI/CD",            c: "tool", links: ["smb", "devsecops"] },
+  { n: "Salesforce",       c: "tool" },
+  { n: "Documentation technique", en: "Technical documentation", c: "tool", links: ["cmacgm"] },
+  { n: "Gestion de projet", en: "Project management", c: "tool", links: ["smb"] },
+  { n: "PyTorch",          c: "ai", links: ["face", "agri"] },
+  { n: "NLP",              c: "ai", links: ["nlp"] },
+  { n: "Vision par ordinateur", en: "Computer vision", c: "ai", links: ["face", "agri"] }
 ];
 
-/* ---------- Projets ---------- */
+/* ---------- Projets (CV : projets académiques) ---------- */
 App.projects = [
   {
     id: "micro", cat: "cloud", icon: "hub",
     title: { fr: "Architecture microservices", en: "Microservices architecture" },
-    short: { fr: "Conception et déploiement d'une application distribuée.", en: "Design and deployment of a distributed application." },
-    challenge: { fr: "Découper une application en services indépendants, déployables et scalables séparément, sans perdre la cohérence globale.", en: "Split an application into independent services that can be deployed and scaled separately without losing overall consistency." },
-    approach: { fr: "Services faiblement couplés communiquant par API, conteneurisés, avec une passerelle d'entrée et une découverte de services ; déploiement orchestré.", en: "Loosely coupled services communicating over APIs, containerised, behind an API gateway with service discovery; orchestrated deployment." },
-    tags: ["Microservices", "Docker", "Kubernetes", "API"]
+    short: { fr: "Application distribuée en microservices — Spring Boot, Docker, Kubernetes.", en: "Distributed microservices application — Spring Boot, Docker, Kubernetes." },
+    challenge: { fr: "Découper une application en services indépendants, déployables et scalables séparément.", en: "Split an application into independent services that can be deployed and scaled separately." },
+    approach: { fr: "Services Spring Boot communiquant par API, conteneurisés avec Docker et déployés sur Kubernetes.", en: "Spring Boot services communicating over APIs, containerised with Docker and deployed on Kubernetes." },
+    tags: ["Spring Boot", "Docker", "Kubernetes"]
   },
   {
     id: "devsecops", cat: "cloud", icon: "shield",
-    title: { fr: "Chaîne DevSecOps", en: "DevSecOps pipeline" },
-    short: { fr: "Intégration d'outils d'analyse de vulnérabilités dans la chaîne CI/CD.", en: "Vulnerability scanning integrated into the CI/CD chain." },
-    challenge: { fr: "Détecter les failles le plus tôt possible, sans ralentir le cycle de livraison.", en: "Catch vulnerabilities as early as possible without slowing delivery." },
-    approach: { fr: "Analyse statique (SAST) et contrôles alignés OWASP exécutés automatiquement à chaque commit, avec blocage du pipeline sur les failles critiques.", en: "Static analysis (SAST) and OWASP-aligned checks run automatically on every commit, failing the pipeline on critical findings." },
-    tags: ["CI/CD", "SAST", "OWASP", "Git"]
+    title: { fr: "DevSecOps", en: "DevSecOps" },
+    short: { fr: "Analyse automatisée des vulnérabilités dans une chaîne CI/CD.", en: "Automated vulnerability analysis in a CI/CD chain." },
+    challenge: { fr: "Détecter les vulnérabilités le plus tôt possible, sans ralentir les livraisons.", en: "Catch vulnerabilities as early as possible without slowing delivery." },
+    approach: { fr: "Analyse des vulnérabilités exécutée automatiquement à chaque modification, intégrée aux étapes de la chaîne CI/CD.", en: "Vulnerability analysis run automatically on every change, built into the CI/CD stages." },
+    tags: ["CI/CD", "Sécurité", "Automatisation"]
   },
   {
     id: "face", cat: "ai", icon: "face",
     title: { fr: "Reconnaissance faciale", en: "Face recognition" },
     short: { fr: "Modèle à base de réseaux siamois.", en: "Siamese-network based model." },
-    challenge: { fr: "Reconnaître une personne à partir de très peu d'exemples par identité (one-shot learning).", en: "Recognise a person from very few examples per identity (one-shot learning)." },
-    approach: { fr: "Réseau siamois apprenant un espace d'embeddings où la distance mesure la similarité entre deux visages ; vérification par seuil.", en: "Siamese network learning an embedding space where distance measures similarity between two faces; threshold-based verification." },
-    tags: ["PyTorch", "Réseaux siamois", "Computer Vision", "Python"]
+    challenge: { fr: "Reconnaître une personne à partir de très peu d'exemples par identité.", en: "Recognise a person from very few examples per identity." },
+    approach: { fr: "Réseau siamois qui compare deux visages en mesurant la distance entre leurs représentations.", en: "Siamese network that compares two faces by measuring the distance between their representations." },
+    tags: ["PyTorch", "Réseaux siamois", "Vision par ordinateur"]
   },
   {
     id: "agri", cat: "ai", icon: "leaf",
     title: { fr: "Classification d'images agricoles", en: "Agricultural image classification" },
     short: { fr: "Modèle de vision par ordinateur.", en: "Computer vision model." },
-    challenge: { fr: "Classer automatiquement des images agricoles malgré la variabilité des conditions de prise de vue.", en: "Automatically classify agricultural images despite varying capture conditions." },
-    approach: { fr: "Réseau de neurones convolutif, augmentation de données et évaluation par matrice de confusion.", en: "Convolutional neural network, data augmentation and confusion-matrix evaluation." },
-    tags: ["PyTorch", "Classification d'images", "CNN", "Python"]
+    challenge: { fr: "Classer automatiquement des images agricoles.", en: "Automatically classify agricultural images." },
+    approach: { fr: "Modèle de vision par ordinateur entraîné pour attribuer une catégorie à chaque image.", en: "Computer vision model trained to assign a category to each image." },
+    tags: ["PyTorch", "Vision par ordinateur"]
   },
   {
     id: "nlp", cat: "ai", icon: "chat",
     title: { fr: "Analyse de sentiments", en: "Sentiment analysis" },
     short: { fr: "Traitement automatique du langage (NLP).", en: "Natural language processing (NLP)." },
-    challenge: { fr: "Déterminer automatiquement la polarité d'un texte libre.", en: "Automatically determine the polarity of free text." },
-    approach: { fr: "Pipeline NLP : nettoyage, tokenisation, vectorisation puis modèle de classification.", en: "NLP pipeline: cleaning, tokenisation, vectorisation, then a classification model." },
-    tags: ["NLP", "Python", "Machine Learning"]
+    challenge: { fr: "Déterminer automatiquement la polarité d'un texte.", en: "Automatically determine the polarity of a text." },
+    approach: { fr: "Chaîne NLP : préparation du texte, représentation, puis modèle de classification.", en: "NLP pipeline: text preparation, representation, then a classification model." },
+    tags: ["NLP", "Python"]
   },
   {
     id: "ecom", cat: "web", icon: "cart",
     title: { fr: "Plateforme e-commerce", en: "E-commerce platform" },
     short: { fr: "Application web complète.", en: "Full web application." },
-    challenge: { fr: "Livrer un parcours d'achat complet : catalogue, panier, commande et administration.", en: "Deliver a full shopping journey: catalogue, cart, checkout and administration." },
-    approach: { fr: "Application web full-stack avec gestion des utilisateurs, du catalogue et des commandes.", en: "Full-stack web application handling users, catalogue and orders." },
-    tags: ["Full-stack", "JavaScript", "HTML5/CSS3", "SQL"]
+    challenge: { fr: "Livrer un parcours d'achat complet, du catalogue à la commande.", en: "Deliver a full shopping journey, from catalogue to order." },
+    approach: { fr: "Application web complète : catalogue, panier, commande et administration.", en: "Full web application: catalogue, cart, checkout and administration." },
+    tags: ["Application web", "Full-stack"]
   }
 ];
 
 App.projectCats = [
   { id: "cloud", fr: "Cloud & DevOps", en: "Cloud & DevOps" },
-  { id: "ai",    fr: "IA & Data",      en: "AI & Data" },
+  { id: "ai",    fr: "IA",             en: "AI" },
   { id: "web",   fr: "Web",            en: "Web" }
 ];
 
 /* ---------- Formation ---------- */
 App.education = [
   {
-    title: { fr: "Diplôme d'Ingénieur d'État — MIAGE", en: "State Engineering Degree — MIAGE" },
-    school: "École Marocaine des Sciences de l'Ingénieur (EMSI)",
+    title: { fr: "Diplôme d'ingénieur d'État — Informatique et Réseaux (MIAGE)", en: "State Engineering Degree — Computer Science & Networks (MIAGE)" },
+    school: "EMSI — École Marocaine des Sciences de l'Ingénieur",
     period: "2021 – 2026", place: "Rabat",
-    detail: { fr: "Méthodes Informatiques Appliquées à la Gestion des Entreprises — Informatique & Réseaux.", en: "Computer Methods Applied to Business Management — Computer Science & Networks." }
+    detail: { fr: "", en: "" }
   },
   {
-    title: { fr: "Baccalauréat Scientifique (Option Français)", en: "Scientific Baccalaureate (French option)" },
+    title: { fr: "Baccalauréat français — option scientifique", en: "French Baccalaureate — science track" },
     school: "Lycée Paul Valéry",
-    period: "2020", place: "Meknès",
+    period: "2021", place: "Meknès",
     detail: { fr: "", en: "" }
   }
 ];
 
+/* Certifications Coursera, dans l'ordre du CV */
 App.certs = [
-  { group: { fr: "Cloud & DevOps", en: "Cloud & DevOps" }, items: ["Docker", "Kubernetes", "OpenShift"] },
-  { group: { fr: "Développement & Data", en: "Development & Data" }, items: ["React Native — Meta", "SQL — University of Colorado", "Git & GitHub — Google"] },
-  { group: { fr: "Intelligence artificielle", en: "Artificial intelligence" }, items: ["AI Foundations — IBM"] }
+  { t: "Containers : Docker, Kubernetes & OpenShift", by: "IBM", y: "2025" },
+  { t: "Virtual Networks in Azure", by: "Whizlabs", y: "2025" },
+  { t: "Introduction to Git and GitHub", by: "Google", y: "2025" },
+  { t: "The Unix Workbench", by: "Johns Hopkins University", y: "2024" },
+  { t: { fr: "Java & programmation orientée objet", en: "Java & object-oriented programming" }, by: "University of Pennsylvania", y: "2024" },
+  { t: { fr: "Programmation orientée objet en C++", en: "Object-oriented programming in C++" }, by: "EPFL", y: "2024" },
+  { t: "Programming for Everybody (Python)", by: "University of Michigan", y: "2024" },
+  { t: "The Structured Query Language (SQL)", by: "University of Colorado Boulder", y: "2023" },
+  { t: "React Basics · React Native", by: "Meta", y: "2024 – 2025" },
+  { t: { fr: "Développement web HTML5, CSS3, JavaScript", en: "Web development HTML5, CSS3, JavaScript" }, by: "University of Michigan & Johns Hopkins", y: "2023 – 2024" },
+  { t: "The Arduino Platform and C Programming", by: "UC Irvine", y: "2023" }
 ];
+App.certsAlso = "Impact Measurement for the SDGs (Duke), Villes africaines et développement durable (EPFL), La recherche documentaire (École Polytechnique)";
 
 App.languages = [
-  { n: { fr: "Français", en: "French" }, lvl: { fr: "Langue maternelle / courant", en: "Native / fluent" }, v: 100 },
-  { n: { fr: "Arabe", en: "Arabic" }, lvl: { fr: "Courant", en: "Fluent" }, v: 90 },
-  { n: { fr: "Anglais", en: "English" }, lvl: { fr: "Avancé", en: "Advanced" }, v: 80 }
+  { n: { fr: "Français", en: "French" }, lvl: { fr: "Courant", en: "Fluent" }, v: 95 },
+  { n: { fr: "Anglais", en: "English" }, lvl: { fr: "Professionnel", en: "Professional" }, v: 75 },
+  { n: { fr: "Arabe", en: "Arabic" }, lvl: { fr: "Courant", en: "Fluent" }, v: 95 }
 ];
 
 App.softSkills = {
-  fr: ["Capacité d'analyse et résolution de problèmes", "Travail en équipe & méthodologies agiles", "Rigueur, organisation et autonomie"],
-  en: ["Analytical thinking and problem solving", "Teamwork & agile methodologies", "Rigour, organisation and autonomy"]
+  source: { fr: "Honoris Online Academy — 6 parcours, 46 h (2025)", en: "Honoris Online Academy — 6 tracks, 46 h (2025)" },
+  fr: ["Communiquer avec impact", "Collaboration en équipe", "Efficacité au quotidien", "Marketing digital", "Entrepreneuriat & Run your Business"],
+  en: ["Communicating with impact", "Team collaboration", "Everyday effectiveness", "Digital marketing", "Entrepreneurship & Run your Business"]
 };
 
 App.interests = {
   fr: [
-    { t: "Bénévolat", d: "Aide humanitaire à la Croix-Rouge." },
-    { t: "Jeux de rôle tactiques", d: "Planification et stratégie." },
-    { t: "Veille technologique", d: "Cloud, infrastructure, IA." }
+    { t: "Lecture", d: "Ouvrages techniques, philosophie, science-fiction." },
+    { t: "Jeux de rôle", d: "Conception d'univers, planification, travail collaboratif." }
   ],
   en: [
-    { t: "Volunteering", d: "Humanitarian aid with the Red Cross." },
-    { t: "Tactical role-playing games", d: "Planning and strategy." },
-    { t: "Tech watch", d: "Cloud, infrastructure, AI." }
+    { t: "Reading", d: "Technical books, philosophy, science fiction." },
+    { t: "Role-playing games", d: "World-building, planning, collaborative work." }
   ]
 };

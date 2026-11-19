@@ -33,12 +33,12 @@
       const full = cwd === "~" ? name : cwd.slice(2) + "/" + name;
       const n = full.replace(/^~\//, "");
       if (n === "about.txt") return [L({ fr: "Ingénieur d'État en Informatique & Réseaux — Diplômé MIAGE (EMSI, 2021–2026).", en: "State-certified Engineer in Computer Science & Networks — MIAGE graduate (EMSI, 2021–2026)." }), "", stripHtml(t("about.p1")), "", t("about.p2"), "", t("about.p3")].join("\n");
-      if (n === "contact.txt") return `email    : <span class="t-link" data-cmd="email">${esc(P.email)}</span>\nphone    : ${esc(P.phone)}\nlocation : ${esc(L({ fr: "Maroc — mobilité internationale", en: "Morocco — open to relocation" }))}\nmode     : ${esc(L({ fr: "Présentiel / Hybride / Télétravail", en: "On-site / Hybrid / Remote" }))}`;
+      if (n === "contact.txt") return `email    : <span class="t-link" data-cmd="email">${esc(P.email)}</span>\nphone    : ${esc(P.phone)}\nlinkedin : <a class="t-link" href="${esc(P.linkedin)}" target="_blank" rel="noopener">${esc(P.linkedinLabel)}</a>\ngithub   : <a class="t-link" href="${esc(P.github)}" target="_blank" rel="noopener">github.com/SorenBe</a>\nzone     : ${esc(L({ fr: "France, Maroc ou télétravail", en: "France, Morocco or remote" }))}\ncontrat  : ${esc(L({ fr: "CDI · CDD · alternance", en: "permanent · fixed-term · work-study" }))}`;
       if (n === "skills.json") {
         const obj = {}; App.skillCategories.forEach((c) => (obj[c.en] = App.skills.filter((s) => s.c === c.id).map((s) => s.n)));
         return colorJson(JSON.stringify(obj, null, 2));
       }
-      if (n === "certifications.md") return App.certs.map((c) => `<span class="t-p">## ${esc(L(c.group))}</span>\n` + c.items.map((i) => `  <span class="t-g">✓</span> ${esc(i)}`).join("\n")).join("\n\n");
+      if (n === "certifications.md") return `<span class="t-p">## Coursera</span>\n` + App.certs.map((c) => `  <span class="t-g">✓</span> ${esc(L(c.t))} <span class="t-d">— ${esc(c.by)}, ${esc(c.y)}</span>`).join("\n") + `\n\n<span class="t-d">${esc(t("edu.also"))} : ${esc(App.certsAlso)}.</span>`;
       if (n === ".secret") return `<span class="t-y">${L({ fr: "Indice : essayez « sudo hire-me » ou le code Konami (↑↑↓↓←→←→BA).", en: "Hint: try “sudo hire-me” or the Konami code (↑↑↓↓←→←→BA)." })}</span>`;
       if (n === "cv.pdf") { setTimeout(() => window.open(P.cv, "_blank"), 300); return `<span class="t-d">${L({ fr: "ouverture de cv.pdf…", en: "opening cv.pdf…" })}</span>`; }
       let m = n.match(/^experience\/(\w+)\.md$/);
@@ -97,18 +97,18 @@
         return `\n--- ${esc(host)} ping statistics ---\n4 packets transmitted, 4 received, <span class="t-g">0% packet loss</span>\nrtt min/avg/max = ${Math.min(...times).toFixed(1)}/${avg.toFixed(1)}/${Math.max(...times).toFixed(1)} ms`;
       } },
       traceroute: { d: { fr: "chemin réseau jusqu'à moi", en: "network path to me" }, run: async () => {
-        const hops = ["gateway.local", "isp-core.casablanca", "ix.rabat.ma", "emsi.edu.ma", "cma-cgm.logistics", "emerge-invest.pve", "smb-industries.fr", "ziyad.noc"];
+        const hops = ["gateway.local", "emsi.rabat", "smb-industries.montpellier", "emerge-invest.casablanca", "cma-cgm.casablanca", "cma-cgm.tanger", "cma-cgm.agadir", "ziyad.noc"];
         print("traceroute to ziyad.noc, 30 hops max");
         for (let i = 0; i < hops.length; i++) { await sleep(320); print(` ${String(i + 1).padStart(2)}  <span class="${i === hops.length - 1 ? "t-g" : ""}">${hops[i].padEnd(22)}</span> ${rand(1 + i * 3, 4 + i * 4).toFixed(2)} ms`); }
         return `<span class="t-g">${L({ fr: "destination atteinte ✓", en: "destination reached ✓" })}</span>`;
       } },
       "docker": { d: { fr: "docker ps", en: "docker ps" }, run: (a) => {
         if (a[0] !== "ps") return `<span class="t-d">usage: docker ps</span>`;
-        return `<span class="t-w">CONTAINER ID   IMAGE                   STATUS          PORTS</span>\n3f9a1c2b7d01   fastapi-api:latest      Up 2 years      0.0.0.0:8000->8000/tcp\n8c2e5f1a9b44   react-frontend:latest   Up 2 years      0.0.0.0:3000->80/tcp\n1b7d3e9f0c22   postgres:16             Up 2 years      5432/tcp\n<span class="t-g">a4c1e8d2f6b9   ziyad/engineer:2026     Up, healthy     0.0.0.0:443->hire/tcp</span>`;
+        return `<span class="t-w">CONTAINER ID   IMAGE                   STATUS          PORTS</span>\n3f9a1c2b7d01   rdv-api:fastapi         Up 2 years      0.0.0.0:8000->8000/tcp\n8c2e5f1a9b44   rdv-front:react         Up 2 years      0.0.0.0:3000->80/tcp\n<span class="t-g">a4c1e8d2f6b9   ziyad/engineer:2026     Up, healthy     0.0.0.0:443->hire/tcp</span>`;
       } },
       kubectl: { d: { fr: "kubectl get pods", en: "kubectl get pods" }, run: (a) => {
         if (a.join(" ") !== "get pods" && a.join(" ") !== "get po") return `<span class="t-d">usage: kubectl get pods</span>`;
-        const rows = [["skills-backend-7d9f8", "Spring Boot · FastAPI · Django"], ["skills-frontend-5c2a1", "React · React Native · Tailwind"], ["skills-devops-9e4b7", "Docker · K8s · OpenShift · Proxmox · Ceph"], ["skills-data-2f8c3", "PostgreSQL · MongoDB · Oracle"], ["skills-ai-6a1d9", "PyTorch · NLP · Siamese nets"], ["skills-net-4b7e2", "TCP/IP · Wireshark · OWASP"]];
+        const rows = App.skillCategories.map((c, i) => ["skills-" + c.id + "-" + ["7d9f8", "5c2a1", "9e4b7", "2f8c3", "6a1d9"][i % 5], App.skills.filter((s) => s.c === c.id).map((s) => (fr() || !s.en ? s.n : s.en)).join(" · ")]);
         return `<span class="t-w">NAME                     READY   STATUS    RESTARTS   NOTES</span>\n` + rows.map(([n, d]) => `${n.padEnd(25)}1/1     <span class="t-g">Running</span>   0          <span class="t-d">${d}</span>`).join("\n");
       } },
       ceph: { d: { fr: "ceph -s", en: "ceph -s" }, run: () => `  cluster:\n    id:     ziyad-hci\n    health: <span class="t-g">HEALTH_OK</span>\n\n  services:\n    mon: 3 daemons, quorum pve-01,pve-02,pve-03\n    osd: 6 osds: 6 up, 6 in\n\n  data:\n    pools:   1 pools, 128 pgs\n    pgs:     128 active+clean` },
