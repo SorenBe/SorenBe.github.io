@@ -443,7 +443,7 @@ App.education = [
   {
     title: { fr: "Baccalauréat français — option scientifique", en: "French Baccalaureate — science track" },
     school: "Lycée Paul Valéry",
-    period: "2021", place: "Meknès",
+    period: "2019", place: "Meknès",
     detail: { fr: "", en: "" }
   }
 ];
