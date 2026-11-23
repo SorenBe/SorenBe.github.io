@@ -14,7 +14,7 @@ App.profile = {
   phoneRaw: "+212701253117",
   cv: "assets/CV_Ziyad_Benabdeljalil.pdf",
   photo: "assets/photo.jpg",
-  linkedin: "https://www.linkedin.com/in/mohame-ziyad-benabdeljalil-9b34a6268",
+  linkedin: "https://www.linkedin.com/in/mohamed-ziyad-benabdeljalil",
   linkedinLabel: "mohamed-ziyad-benabdeljalil",
   github: "https://github.com/SorenBe"
 };
